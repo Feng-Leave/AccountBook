@@ -1,16 +1,7 @@
 var express = require('express')
 var router = express.Router()
 
-// 导入lowdb
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
-const adapter = new FileSync(__dirname + '/../data/db.json')
-// 读取lowdb对象
-const db = low(adapter)
-
-// 导入shortid
-const shortid = require('shortid')
-const AccountModel = require('../models/AccountModel')
+const AccountModel = require('../../models/AccountModel')
 const moment = require('moment')
 
 // 记账本的列表
