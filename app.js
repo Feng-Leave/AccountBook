@@ -7,6 +7,7 @@ var logger = require('morgan')
 var indexRouter = require('./routes/web/index')
 const accountRouter = require('./routes/api/account')
 const authRouter = require('./routes/web/auth')
+const authApiRouter = require('./routes/api/auth')
 
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
@@ -39,8 +40,9 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
-app.use('/api', accountRouter)
 app.use('/', authRouter)
+app.use('/api', accountRouter)
+app.use('/api', authApiRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

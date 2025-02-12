@@ -39,8 +39,9 @@ router.post('/login', async (req, res) => {
 		req.session._id = user._id
 
 		return res.render('success', { msg: '登录成功', url: '/account' })
-	} catch (err) {}
-	return res.status(500).send('登录失败，请稍候再试~~')
+  } catch (err) {
+    return res.status(500).send('登录失败，请稍候再试~~')
+  }
 })
 
 // 退出登录
