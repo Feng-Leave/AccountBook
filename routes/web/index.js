@@ -6,6 +6,11 @@ const moment = require('moment')
 // 导入中间件
 let checkLoginMiddleWare = require('../../middlewares/checkLoginMiddleWare')
 
+// 添加路由首页规则
+router.get('/', async (req, res) => {
+  return await res.redirect('/account')
+})
+
 // 记账本的列表
 router.get('/account', checkLoginMiddleWare, async function (req, res, next) {
 	try {
