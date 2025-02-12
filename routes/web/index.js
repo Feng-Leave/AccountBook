@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
 
 // 记账本的列表
 router.get('/account', checkLoginMiddleWare, async function (req, res, next) {
-	try {
+  try {
 		// 使用 await 获取数据库数据
 		const data = await AccountModel.find().sort({ time: -1 })
 

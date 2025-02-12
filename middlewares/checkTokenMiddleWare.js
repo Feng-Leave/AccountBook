@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { secret } = require('../config/config')
 
 module.exports = (req, res, next) => {
 	try {
@@ -11,7 +12,9 @@ module.exports = (req, res, next) => {
 			})
 		}
 		// 校验token
-		jwt.verify(token, 'likerain')
+    const decoded = jwt.verify(token, secret)
+    
+    req.user = decoded
 		// 校验成功
 		next()
 	} catch (err) {

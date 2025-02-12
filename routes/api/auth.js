@@ -3,6 +3,7 @@ var router = express.Router()
 const UserModel = require('../../models/UserModel')
 const jwt = require('jsonwebtoken')
 const md5 = require('md5')
+const { secret } = require('../../config/config')
 
 // 登录操作
 router.post('/login', async (req, res) => {
@@ -24,24 +25,22 @@ router.post('/login', async (req, res) => {
 				username: user.username,
 				_id: user._id,
 			},
-			'likerain',
+			secret,
 			{
 				expiresIn: 60 * 60 * 24 * 7,
 			}
 		)
-		res.json({
+		return res.json({
 			code: '0000',
 			msg: '登录成功',
 			data: token,
 		})
-		return res.render('success', { msg: '登录成功', url: '/account' })
 	} catch (err) {
-		res.json({
+		return res.json({
 			code: '2001',
 			msg: '数据库读取错误~~',
 			data: null,
 		})
-		return
 	}
 })
 

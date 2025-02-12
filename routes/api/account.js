@@ -8,7 +8,8 @@ const checkTokenMiddleWare = require('../../middlewares/checkTokenMiddleWare')
 
 // 记账本的列表
 router.get('/account', checkTokenMiddleWare, async function (req, res, next) {
-	try {
+  try {
+    console.log(req.user)
 		// 使用 await 获取数据库数据
 		const data = await AccountModel.find().sort({ time: -1 })
 
