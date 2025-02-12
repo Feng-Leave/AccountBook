@@ -16,13 +16,12 @@ router.get('/account', async function (req, res, next) {
 		}
 
 		// 渲染数据到视图
-		res.render('list', { accounts: data, moment: moment })
+		return res.render('list', { accounts: data, moment: moment })
 	} catch (err) {
 		console.error('读取失败:', err)
 		res.status(500).send('读取失败~~')
 	}
 })
-
 
 // 添加记录
 router.get('/account/create', function (req, res, next) {
@@ -32,20 +31,23 @@ router.get('/account/create', function (req, res, next) {
 // 新增记录
 router.post('/account', async (req, res) => {
 	try {
-		req.body.account = parseFloat(req.body.account)
-		req.body.type = parseInt(req.body.type, 10)
-		req.body.time = moment(req.body.time).toDate()
-
-		console.log(req.body)
-
-		// 使用async/await并去掉回调函数
-		await AccountModel.create(req.body)
+		const data = {
+			account: parseFloat(req.body.account),
+			type: parseInt(req.body.type, 10),
+			time: moment(req.body.time).toDate(),
+			// 其他字段...
+		}
+		await AccountModel.create(data)
 
 		// 插入成功后返回响应
-		res.render('success', { msg: '添加成功哦~~~', url: '/account' })
+		return res.render('success', { msg: '添加成功哦~~~', url: '/account' })
 	} catch (err) {
 		console.error('插入失败:', err)
-		res.status(500).send('插入失败~~')
+		// 添加 return 并返回更清晰的错误信息
+		return res.status(500).json({
+			code: 500,
+			message: '服务器错误，请检查数据格式或联系管理员',
+		})
 	}
 })
 
@@ -55,15 +57,15 @@ router.get('/account/:id', async (req, res) => {
 		let id = req.params.id
 
 		// 使用 deleteOne 来删除指定记录
-		await AccountModel.deleteOne({ _id: id })
-
-		// 删除成功后渲染 success 页面
-		res.render('success', { msg: '删除成功哦~~~', url: '/account' })
+		const result = await AccountModel.deleteOne({ _id: id })
+		if (result.deletedCount === 0) {
+			return res.status(404).send('记录不存在')
+		}
+		return res.render('success', { msg: '删除成功哦~~~', url: '/account' })
 	} catch (err) {
 		// 如果出现错误，发送失败的响应
 		res.status(500).send('删除失败~~')
 	}
 })
-
 
 module.exports = router
