@@ -44,7 +44,7 @@ router.post('/login', async (req, res) => {
 })
 
 // 退出登录
-router.get('/logout', async (req, res) => {
+router.post('/logout', async (req, res) => {
 	await req.session.destroy(() => {
 		return res.render('success', { msg: '退出成功', url: 'login' })
 	})
