@@ -32,8 +32,12 @@ router.post('/login', async (req, res) => {
 		})
 		if (!user) {
 			return res.status(500).send('用户名或密码错误~~')
-		}
-		res.render('success', { msg: '登录成功', url: '/account' })
+    }
+    // 写入session
+    req.session.username = user.username
+    req.session._id = user._id
+
+		return res.render('success', { msg: '登录成功', url: '/account' })
 	} catch (err) {}
 	return res.status(500).send('登录失败，请稍候再试~~')
 })

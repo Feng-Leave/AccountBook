@@ -3,9 +3,11 @@ var router = express.Router()
 
 const AccountModel = require('../../models/AccountModel')
 const moment = require('moment')
+// 导入中间件
+let checkLoginMiddleWare = require('../../middlewares/checkLoginMiddleWare')
 
 // 记账本的列表
-router.get('/account', async function (req, res, next) {
+router.get('/account', checkLoginMiddleWare, async function (req, res, next) {
 	try {
 		// 使用 await 获取数据库数据
 		const data = await AccountModel.find().sort({ time: -1 })
@@ -24,12 +26,12 @@ router.get('/account', async function (req, res, next) {
 })
 
 // 添加记录
-router.get('/account/create', function (req, res, next) {
+router.get('/account/create', checkLoginMiddleWare, function (req, res, next) {
 	res.render('create')
 })
 
 // 新增记录
-router.post('/account', async (req, res) => {
+router.post('/account', checkLoginMiddleWare, async (req, res) => {
 	try {
 		const data = {
 			account: parseFloat(req.body.account),
@@ -52,7 +54,7 @@ router.post('/account', async (req, res) => {
 })
 
 // 删除记录
-router.get('/account/:id', async (req, res) => {
+router.get('/account/:id', checkLoginMiddleWare, async (req, res) => {
 	try {
 		let id = req.params.id
 
