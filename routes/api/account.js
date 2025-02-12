@@ -3,10 +3,11 @@ var router = express.Router()
 
 const AccountModel = require('../../models/AccountModel')
 const moment = require('moment')
-const { route } = require('../web')
+const jwt = require('jsonwebtoken')
+const checkTokenMiddleWare = require('../../middlewares/checkTokenMiddleWare')
 
 // 记账本的列表
-router.get('/account', async function (req, res, next) {
+router.get('/account', checkTokenMiddleWare, async function (req, res, next) {
 	try {
 		// 使用 await 获取数据库数据
 		const data = await AccountModel.find().sort({ time: -1 })
@@ -23,6 +24,7 @@ router.get('/account', async function (req, res, next) {
 			data: data,
 		})
 	} catch (err) {
+		// 其他错误（如数据库查询失败）
 		res.json({
 			code: '1001',
 			msg: '读取失败',
@@ -32,7 +34,7 @@ router.get('/account', async function (req, res, next) {
 })
 
 // 新增记录
-router.post('/account', async (req, res) => {
+router.post('/account', checkTokenMiddleWare, async (req, res) => {
 	try {
 		req.body.account = parseFloat(req.body.account)
 		req.body.type = parseInt(req.body.type, 10)
@@ -60,7 +62,7 @@ router.post('/account', async (req, res) => {
 })
 
 // 删除记录
-router.delete('/account/:id', async (req, res) => {
+router.delete('/account/:id', checkTokenMiddleWare, async (req, res) => {
 	try {
 		let id = req.params.id
 
@@ -84,7 +86,7 @@ router.delete('/account/:id', async (req, res) => {
 })
 
 // 获取单个账单信息
-router.get('/account/:id', async (req, res) => {
+router.get('/account/:id', checkTokenMiddleWare, async (req, res) => {
 	let { id } = req.params
 	try {
 		const data = await AccountModel.findById(id)
@@ -103,21 +105,23 @@ router.get('/account/:id', async (req, res) => {
 })
 
 // 更新单条账单
-router.patch('/account/:id', async (req, res) => {
+router.patch('/account/:id', checkTokenMiddleWare, async (req, res) => {
 	let { id } = req.params
-  try {
-    const data = await AccountModel.findByIdAndUpdate(id,req.body,{new: true})
-    res.json({
-      code: '0000',
-      msg: '更新成功',
-      data: data
-    })
-  } catch {
-    return res.json({
+	try {
+		const data = await AccountModel.findByIdAndUpdate(id, req.body, {
+			new: true,
+		})
+		res.json({
+			code: '0000',
+			msg: '更新成功',
+			data: data,
+		})
+	} catch {
+		return res.json({
 			code: '1005',
 			msg: '更新失败',
 			data: null,
 		})
-  }
+	}
 })
 module.exports = router
