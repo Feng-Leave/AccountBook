@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 const UserModel = require('../../models/UserModel')
 const md5 = require('md5')
+
 // 注册见面渲染
 router.get('/reg', async (req, res) => {
 	await res.render('auth/reg')
@@ -32,14 +33,20 @@ router.post('/login', async (req, res) => {
 		})
 		if (!user) {
 			return res.status(500).send('用户名或密码错误~~')
-    }
-    // 写入session
-    req.session.username = user.username
-    req.session._id = user._id
+		}
+		// 写入session
+		req.session.username = user.username
+		req.session._id = user._id
 
 		return res.render('success', { msg: '登录成功', url: '/account' })
 	} catch (err) {}
 	return res.status(500).send('登录失败，请稍候再试~~')
 })
 
+// 退出登录
+router.get('/logout', async (req, res) => {
+	await req.session.destroy(() => {
+		return res.render('success', { msg: '退出成功', url: 'login' })
+	})
+})
 module.exports = router
